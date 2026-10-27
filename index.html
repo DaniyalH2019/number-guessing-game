@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Number Guessing Game</title>
+<style>
+:root{--bg:#04132d;--panel:#071d3c;--panel2:#061831;--line:#123d73;--blue:#159bff;--cyan:#18c8ee;--text:#f3f7ff;--muted:#9db9e9;--green:#18d48a;--red:#ff4d68;--yellow:#ffc52e;--purple:#b56bff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#0b2c61 0,#04132d 58%);color:var(--text);font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+header{display:flex;align-items:center;justify-content:space-between;padding:22px clamp(18px,3.2vw,52px);border-bottom:1px solid #123568;background:#061a3baf}
+.brand{display:flex;align-items:center;gap:16px;font-weight:800;font-size:clamp(22px,3vw,38px);letter-spacing:-.7px}.target{font-size:38px}.brand span span{color:var(--blue)}.tagline{color:#a9c4fa;font-style:italic;font-weight:600}
+main{max-width:1500px;margin:30px auto;padding:0 24px;display:grid;grid-template-columns:280px minmax(400px,1fr) 280px;gap:22px}
+.panel{background:linear-gradient(145deg,#061e40f2,#041832f5);border:1px solid var(--line);border-radius:17px;padding:22px;box-shadow:0 16px 45px #0002}
+h2{font-size:21px;margin:0 0 20px;display:flex;gap:12px;align-items:center}h2 .ico{font-size:25px}
+.stats{display:grid;gap:13px}.stat{border:1px solid #123a6c;background:#041631a8;border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:15px;min-height:72px}.stat-icon{font-size:28px;width:34px;text-align:center}.stat small{display:block;color:var(--muted);font-size:14px}.stat strong{font-size:23px;line-height:1.2;display:block}.green{color:var(--green)}.red{color:var(--red)}.yellow{color:var(--yellow)}.purple{color:var(--purple)}.blue{color:var(--blue)}.cyan{color:var(--cyan)}.pink{color:#ff5ab8}
+.center{padding:25px 22px}.difficulty-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:24px}.difficulty-row label{color:#d1e3ff;font-weight:650;margin-right:4px}.difficulty{flex:1;min-width:105px;padding:13px 8px;border:1px solid #147bda;background:#061a38;color:#7fc1ff;border-radius:13px;font-weight:750;cursor:pointer}.difficulty[data-level="Easy"]{border-color:#12d98b;color:#26e5a2}.difficulty[data-level="Hard"]{border-color:#a34cff;color:#c78aff}.difficulty.active{background:#0a3353;box-shadow:inset 0 0 0 1px currentColor}
+.welcome{border:1px solid #10396c;border-radius:15px;background:linear-gradient(150deg,#041630,#061c3c);padding:32px 20px;text-align:center;margin-bottom:22px;min-height:280px;display:flex;flex-direction:column;align-items:center;justify-content:center}.welcome .big{font-size:46px}.welcome h3{font-size:clamp(20px,2vw,28px);margin:12px 0;color:#f4f8ff}.welcome h3 span{color:var(--blue)}.welcome p{color:#9ebdf1;margin:0 0 24px}.primary{border:0;border-radius:13px;padding:16px 25px;background:linear-gradient(100deg,#10b978,#1ac780);color:white;font-size:18px;font-weight:800;cursor:pointer;min-width:210px;box-shadow:0 8px 24px #00a96926}.primary:hover{filter:brightness(1.1)}button:focus-visible,input:focus-visible{outline:3px solid #67c4ff;outline-offset:2px}
+.guess-panel{border:1px solid #10396c;border-radius:15px;padding:18px;background:#041630a8}.guess-panel h3{margin:0 0 14px;font-size:19px;color:#b9ddff}.guess-row{display:flex;gap:12px}.guess-row input{min-width:0;flex:1;background:#051c3e;border:1px solid #2a5a9e;border-radius:12px;padding:15px 17px;color:white;font:inherit;font-size:17px}.guess-btn{border:0;border-radius:12px;background:#098cf0;color:white;font-weight:800;font-size:17px;padding:0 22px;cursor:pointer}.feedback{margin-top:17px;border:1px solid #765713;border-radius:13px;background:#33280c55;color:var(--yellow);padding:14px 16px;font-weight:750;min-height:56px}.feedback.good{border-color:#08764f;color:var(--green);background:#0c3b2b55}.feedback.bad{border-color:#823248;color:#ff8092;background:#3d122255}.attempts{display:flex;justify-content:center;gap:23px;margin:19px 0 0}.attempt{display:flex;flex-direction:column;align-items:center;gap:7px;color:#648cc9}.dot{height:23px;width:23px;border:2px solid #27558e;border-radius:50%}.dot.used{background:#159bff;border-color:#159bff;box-shadow:0 0 12px #159bff55}.dot.correct{background:var(--green);border-color:var(--green)}
+.rules{color:#b5cdf6}.rule{display:flex;gap:13px;margin:17px 0;align-items:flex-start}.num{height:34px;width:34px;flex:0 0 34px;border-radius:50%;display:grid;place-items:center;color:#03152b;font-weight:850;background:var(--green)}.rule:nth-of-type(3) .num{background:var(--blue);color:white}.rule:nth-of-type(4) .num{background:var(--purple)}.rule:nth-of-type(5) .num{background:var(--yellow)}.rule:nth-of-type(6) .num{background:#ff5ab8}
+hr{border:0;border-top:1px solid #123b6c;margin:22px 0}.score-list{border:1px solid #164477;border-radius:13px;padding:12px 16px}.score-line{display:flex;justify-content:space-between;padding:4px 0;color:#c5d9fa}.score-line b{color:var(--green)}.luck{text-align:center;color:#1da5ff;font-size:21px;font-weight:750;font-style:italic;margin-top:24px}
+footer{text-align:center;color:#6e91c5;padding:0 20px 24px;font-size:13px}
+@media(max-width:1050px){main{grid-template-columns:1fr 1fr}.center{grid-column:1/-1;grid-row:1}.left{grid-column:1}.right{grid-column:2}}
+@media(max-width:650px){header{align-items:flex-start;gap:12px}.tagline{display:none}main{display:flex;flex-direction:column;padding:0 14px;margin:16px auto;gap:14px}.center{order:0}.left{order:1}.right{order:2}.panel{padding:17px}.difficulty-row{align-items:stretch}.difficulty-row label{width:100%}.difficulty{min-width:0}.guess-row{flex-direction:column}.guess-btn{padding:14px}.welcome{min-height:245px;padding:24px 14px}.attempts{gap:18px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="target">🎯</div><div>Number <span>Guessing</span> Game</div></div>
+  <div class="tagline">Think <span class="blue">•</span> Guess <span class="blue">•</span> Win!</div>
+</header>
+<main>
+  <aside class="panel left">
+    <h2><span class="ico">📊</span> Your Stats</h2>
+    <div class="stats">
+      <div class="stat"><div class="stat-icon green">🏆</div><div><small>Wins</small><strong class="green" id="wins">0</strong></div></div>
+      <div class="stat"><div class="stat-icon red">✖️</div><div><small>Losses</small><strong class="red" id="losses">0</strong></div></div>
+      <div class="stat"><div class="stat-icon yellow">⭐</div><div><small>Score</small><strong class="yellow" id="score">0</strong></div></div>
+      <div class="stat"><div class="stat-icon purple">👑</div><div><small>Best Score</small><strong class="purple" id="best">0</strong></div></div>
+      <div class="stat"><div class="stat-icon blue">🎯</div><div><small>Total Guess</small><strong class="blue" id="total">0</strong></div></div>
+      <div class="stat"><div class="stat-icon cyan">％</div><div><small>Win Percent</small><strong class="cyan" id="rate">0%</strong></div></div>
+      <div class="stat"><div class="stat-icon pink">📈</div><div><small>Average Guesses</small><strong class="pink" id="average">0.0</strong></div></div>
+    </div>
+    <button id="reset" class="difficulty" style="width:100%;margin-top:16px">Reset Statistics</button>
+  </aside>
+
+  <section class="panel center">
+    <h2><span class="ico">🎮</span> <span id="heading">Start a New Game</span></h2>
+    <div class="difficulty-row">
+      <label>Select Difficulty:</label>
+      <button class="difficulty active" data-level="Easy">Easy (1–10)</button>
+      <button class="difficulty" data-level="Normal">Normal (1–50)</button>
+      <button class="difficulty" data-level="Hard">Hard (1–100)</button>
+    </div>
+    <div class="welcome" id="welcome">
+      <div class="big">🎯</div>
+      <h3>Welcome to the <span>Number Guessing Game!</span></h3>
+      <p>Choose a difficulty level and click "Start Game" to begin.</p>
+      <button id="start" class="primary">▶ &nbsp; Start Game</button>
+    </div>
+    <div class="guess-panel">
+      <h3>⌗ &nbsp; Your Guess</h3>
+      <form id="guessForm" class="guess-row">
+        <input id="guessInput" type="number" placeholder="Enter a number..." autocomplete="off" disabled>
+        <button class="guess-btn" id="guessButton" disabled>➤ &nbsp; Guess</button>
+      </form>
+      <div class="feedback" id="feedback" role="status" aria-live="polite">💡 &nbsp; Choose a difficulty and start playing!</div>
+      <div class="attempts" id="attempts">
+        <div class="attempt"><span class="dot"></span><span>1</span></div>
+        <div class="attempt"><span class="dot"></span><span>2</span></div>
+        <div class="attempt"><span class="dot"></span><span>3</span></div>
+        <div class="attempt"><span class="dot"></span><span>4</span></div>
+        <div class="attempt"><span class="dot"></span><span>5</span></div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="panel right">
+    <h2><span class="ico">💡</span> How to Play</h2>
+    <div class="rules">
+      <div class="rule"><div class="num">1</div><div>Choose a difficulty level (Easy, Normal or Hard).</div></div>
+      <div class="rule"><div class="num">2</div><div>Enter a number within the given range.</div></div>
+      <div class="rule"><div class="num">3</div><div>Get a hint (Too high / Too low).</div></div>
+      <div class="rule"><div class="num">4</div><div>You have 5 attempts to guess the correct number.</div></div>
+      <div class="rule"><div class="num">5</div><div>Try to get the highest score and best record!</div></div>
+    </div>
+    <hr>
+    <h2><span class="ico">⭐</span> Scoring</h2>
+    <div class="score-list">
+      <div class="score-line"><span>1st guess</span><b>+100</b></div>
+      <div class="score-line"><span>2nd guess</span><b>+80</b></div>
+      <div class="score-line"><span>3rd guess</span><b>+60</b></div>
+      <div class="score-line"><span>4th guess</span><b>+40</b></div>
+      <div class="score-line"><span>5th guess</span><b>+20</b></div>
+    </div>
+    <div class="luck">Good luck!<br>You can do it!<div style="font-style:normal;font-size:26px;margin-top:8px">☺</div></div>
+  </aside>
+</main>
+<footer>Number Guessing Game · Runs locally in your browser · No installation needed</footer>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const state = { difficulty: "Easy", number: null, count: 0, active: false, wins: 0, losses: 0, score: 0, best: 0, total: 0, roundGuesses: [] };
+  const ranges = { Easy: 10, Normal: 50, Hard: 100 };
+  const scoreByGuess = [100, 80, 60, 40, 20];
+  const input = $("guessInput"), guessButton = $("guessButton"), feedback = $("feedback");
+  const setFeedback = (message, type="") => { feedback.textContent = message; feedback.className = "feedback" + (type ? " " + type : ""); };
+  function updateStats() {
+    $("wins").textContent = state.wins;
+    $("losses").textContent = state.losses;
+    $("score").textContent = state.score;
+    $("best").textContent = state.best;
+    $("total").textContent = state.total;
+    const games = state.wins + state.losses;
+    $("rate").textContent = (games ? (state.wins / games * 100).toFixed(1).replace(/\.0$/,"") : "0") + "%";
+    $("average").textContent = state.roundGuesses.length ? (state.roundGuesses.reduce((a,b)=>a+b,0) / state.roundGuesses.length).toFixed(1) : "0.0";
+  }
+  function updateAttempts() {
+    [...$("attempts").querySelectorAll(".dot")].forEach((dot,i) => {
+      dot.className = "dot" + (i < state.count ? " used" : "");
+    });
+  }
+  function setDifficulty(level) {
+    if (state.active) return;
+    state.difficulty = level;
+    document.querySelectorAll(".difficulty[data-level]").forEach(btn => btn.classList.toggle("active", btn.dataset.level === level));
+  }
+  document.querySelectorAll(".difficulty[data-level]").forEach(btn => btn.addEventListener("click", () => setDifficulty(btn.dataset.level)));
+  function startGame() {
+    state.number = Math.floor(Math.random() * ranges[state.difficulty]) + 1;
+    state.count = 0;
+    state.active = true;
+    $("heading").textContent = state.difficulty + " Game";
+    $("welcome").innerHTML = `<div class="big">🎯</div><h3>Game <span>Started!</span></h3><p>Guess a number from 1 to ${ranges[state.difficulty]}.</p><button id="restart" class="primary" type="button">↻ &nbsp; Restart Game</button>`;
+    $("restart").addEventListener("click", startGame);
+    input.disabled = false;
+    guessButton.disabled = false;
+    input.min = 1;
+    input.max = ranges[state.difficulty];
+    input.placeholder = `Enter a number (1–${ranges[state.difficulty]})...`;
+    input.value = "";
+    setFeedback("💡 Make your first guess!");
+    updateAttempts();
+    input.focus();
+  }
+  function endGame(won) {
+    state.active = false;
+    input.disabled = true;
+    guessButton.disabled = true;
+    if (won) {
+      state.wins++;
+      const earned = scoreByGuess[state.count - 1];
+      state.score += earned;
+      state.best = Math.max(state.best, earned);
+      state.roundGuesses.push(state.count);
+      setFeedback(`🎉 Correct! You won in ${state.count} ${state.count === 1 ? "guess" : "guesses"} and earned +${earned} points!`, "good");
+      $("welcome").innerHTML = `<div class="big">🏆</div><h3>You <span>Won!</span></h3><p>The number was ${state.number}. You earned ${earned} points.</p><button id="restart" class="primary" type="button">↻ &nbsp; Play Again</button>`;
+    } else {
+      state.losses++;
+      state.roundGuesses.push(state.count);
+      setFeedback(`😢 Game over! The number was ${state.number}.`, "bad");
+      $("welcome").innerHTML = `<div class="big">🎯</div><h3>Nice try!</h3><p>The correct number was ${state.number}. Ready for another round?</p><button id="restart" class="primary" type="button">↻ &nbsp; Try Again</button>`;
+    }
+    $("restart").addEventListener("click", startGame);
+    updateStats();
+    document.querySelectorAll(".difficulty[data-level]").forEach(btn => btn.classList.remove("active"));
+    document.querySelector(`.difficulty[data-level="${state.difficulty}"]`).classList.add("active");
+  }
+  $("guessForm").addEventListener("submit", e => {
+    e.preventDefault();
+    if (!state.active) return;
+    const value = Number(input.value);
+    if (input.value.trim() === "" || !Number.isInteger(value) || value < 1 || value > ranges[state.difficulty]) {
+      setFeedback(`⚠️ Enter a whole number from 1 to ${ranges[state.difficulty]}.`, "bad");
+      input.focus(); return;
+    }
+    state.count++;
+    state.total++;
+    updateAttempts();
+    if (value === state.number) {
+      endGame(true);
+    } else if (state.count >= 5) {
+      endGame(false);
+    } else {
+      setFeedback(value > state.number ? `⬇️ Too high! Try a smaller number. (${5-state.count} attempts left)` : `⬆️ Too low! Try a bigger number. (${5-state.count} attempts left)`);
+      input.value = "";
+      input.focus();
+    }
+    updateStats();
+  });
+  $("start").addEventListener("click", startGame);
+  $("reset").addEventListener("click", () => {
+    if (!confirm("Reset all statistics?")) return;
+    state.wins=state.losses=state.score=state.best=state.total=0;
+    state.roundGuesses=[];
+    updateStats();
+    setFeedback("📊 Statistics reset. Start a new game whenever you're ready.");
+  });
+  updateStats();
+})();
+</script>
+</body>
+</html>
